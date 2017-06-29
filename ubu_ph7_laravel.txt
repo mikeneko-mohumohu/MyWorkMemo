@@ -1,0 +1,54 @@
+php7.1
+nginx1.12
+mysql
+
+sudo apt-get update
+sudo apt-add-repository ppa:ondrej/php
+sudo apt-get update
+sudo apt-get install php7.1
+sudo apt-get install php7.1-common
+sudo apt-get install php7.1-curl php7.1-xml php7.1-zip php7.1-gd php7.1-mysql php7.1-mbstring
+sudo apt-get install php7.1-fpm
+
+sudo apt-get install mysql-server
+mysql -u[user] -p
+create database homestead;
+create user homestead identified by 'password';
+grant all on homestead.* to homestead;
+exit;
+
+sudo curl http://nginx.org/keys/nginx_signing.key | sudo apt-key add -
+sudo sh -c "echo 'deb http://nginx.org/packages/ubuntu/ trusty nginx' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb-src http://nginx.org/packages/ubuntu/ trusty nginx' >> /etc/apt/sources.list"
+sudo apt-get update
+sudo apt-get install nginx
+
+
+
+sudo curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+sudo chmod +x /usr/local/bin/composer
+
+cd /var/www
+mkdir hogehoge
+sudo chown user:usergroup /var/www
+composer create-project laravel/laravel --prefer-dist hogehoge
+
+
+find . -type d -exec chown www-data:www-data {} \;
+find . -type f -exec chown www-data:www-data {} \;
+
+
+php artisan migrate
+
+以下がでた場合
+Syntax error or access violation: 1071 Specified key was too long
+
+AppServiceProviderに追加
+
+use Illuminate\Support\Facades\Schema;
+public function boot()
+{
+    Schema::defaultStringLength(191);
+}
+
